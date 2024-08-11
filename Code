@@ -1,0 +1,97 @@
+Private Sub UserForm_Initialize()
+    ' Populate the ComboBox with available Excel formats
+    With cmbFormats
+        .AddItem "xlsx (Excel Workbook)"
+        .AddItem "xls (Excel 97-2003 Workbook)"
+        .AddItem "xlsm (Excel Macro-Enabled Workbook)"
+        .AddItem "xlsb (Excel Binary Workbook)"
+        .AddItem "xltx (Excel Template)"
+        .AddItem "xltm (Excel Macro-Enabled Template)"
+        .AddItem "xls (Excel 97-2003 Template)"
+        .AddItem "xml (XML Data)"
+        .AddItem "csv (CSV File)"
+        .AddItem "txt (Text File)"
+        .AddItem "prn (Formatted Text Space Delimited)"
+        .AddItem "pdf (PDF File)"
+        .AddItem "xlam (Excel Add-In)"
+        .AddItem "xla (Excel 97-2003 Add-In)"
+        .AddItem "htm (HTML Document)"
+        .AddItem "mht (Single File Web Page)"
+    End With
+End Sub
+
+
+Sub ConvertFile(selectedFormat As String)
+    Dim savePath As String
+    Dim fileFormat As Long
+    Dim fileName As String
+    
+    ' Define the path to save the file
+    savePath = ThisWorkbook.Path & "\"
+    fileName = ThisWorkbook.Name
+    fileName = Left(fileName, InStrRev(fileName, ".") - 1) ' Remove current file extension
+    
+    ' Determine the file format based on the selected format
+    Select Case selectedFormat
+        Case "xlsx (Excel Workbook)"
+            fileFormat = 51 ' xlOpenXMLWorkbook
+            selectedFormat = "xlsx"
+        Case "xls (Excel 97-2003 Workbook)"
+            fileFormat = 56 ' xlExcel8
+            selectedFormat = "xls"
+        Case "xlsm (Excel Macro-Enabled Workbook)"
+            fileFormat = 52 ' xlOpenXMLWorkbookMacroEnabled
+            selectedFormat = "xlsm"
+        Case "xlsb (Excel Binary Workbook)"
+            fileFormat = 50 ' xlExcel12
+            selectedFormat = "xlsb"
+        Case "xltx (Excel Template)"
+            fileFormat = 54 ' xlOpenXMLTemplate
+            selectedFormat = "xltx"
+        Case "xltm (Excel Macro-Enabled Template)"
+            fileFormat = 53 ' xlOpenXMLTemplateMacroEnabled
+            selectedFormat = "xltm"
+        Case "xls (Excel 97-2003 Template)"
+            fileFormat = 17 ' xlTemplate
+            selectedFormat = "xlt"
+        Case "xml (XML Data)"
+            fileFormat = 46 ' xlXMLSpreadsheet
+            selectedFormat = "xml"
+        Case "csv (CSV File)"
+            fileFormat = 6 ' xlCSV
+            selectedFormat = "csv"
+        Case "txt (Text File)"
+            fileFormat = -4158 ' xlText
+            selectedFormat = "txt"
+        Case "prn (Formatted Text Space Delimited)"
+            fileFormat = 36 ' xlTextPrinter
+            selectedFormat = "prn"
+        Case "pdf (PDF File)"
+            fileFormat = 57 ' xlPDF
+            selectedFormat = "pdf"
+        Case "xlam (Excel Add-In)"
+            fileFormat = 55 ' xlOpenXMLAddIn
+            selectedFormat = "xlam"
+        Case "xla (Excel 97-2003 Add-In)"
+            fileFormat = 18 ' xlAddIn
+            selectedFormat = "xla"
+        Case "htm (HTML Document)"
+            fileFormat = 44 ' xlHtml
+            selectedFormat = "htm"
+        Case "mht (Single File Web Page)"
+            fileFormat = 45 ' xlWebArchive
+            selectedFormat = "mht"
+        Case Else
+            MsgBox "Selected format is not supported.", vbExclamation
+            Exit Sub
+    End Select
+    
+    ' Save the workbook in the selected format
+    If selectedFormat = "pdf" Then
+        ThisWorkbook.ExportAsFixedFormat Type:=xlTypePDF, Filename:=savePath & fileName & ".pdf"
+    Else
+        ThisWorkbook.SaveAs Filename:=savePath & fileName & "." & selectedFormat, FileFormat:=fileFormat
+    End If
+    
+    MsgBox "File saved as " & fileName & "." & selectedFormat, vbInformation
+End Sub
